@@ -1,4 +1,4 @@
-const port = 4000;
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -7,15 +7,23 @@ const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
 
+const port = process.env.PORT || 4000;
+
 app.use(cors());
 app.use(express.json());
 
 // Database connection
-mongoose.connect('mongodb+srv://yabin449_db_user:QSU208Iv96ZJ9r2E@cluster0.xjofaeg.mongodb.net/ecommerse').then(() => {
-    console.log("MongoDB connected successfully.");
-}).catch((err) => {
-    console.error("MongoDB connection error:", err);
-});
+const mongoURI = process.env.MONGODB_URI;
+
+if (!mongoURI) {
+    console.error("CRITICAL ERROR: MONGODB_URI environment variable is not defined in backend/.env!");
+} else {
+    mongoose.connect(mongoURI).then(() => {
+        console.log("MongoDB connected successfully.");
+    }).catch((err) => {
+        console.error("MongoDB connection error:", err);
+    });
+}
 
 // Default root endpoint
 app.get("/", (req, res) => {
